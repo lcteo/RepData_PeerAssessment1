@@ -1,10 +1,6 @@
----
-output:
-  html_document:
-    keep_md: true
----
 
-```{r global_options}
+
+```r
 knitr::opts_chunk$set(fig.path='./figure/')
 ```
 
@@ -48,7 +44,8 @@ Show any code that is needed to
 directory
 * Do not need to unzip dataset file if the activity csv file already exists
 
-```{r echo=TRUE}
+
+```r
 if(!file.exists("./activity.csv")) {
     unzip(zipfile="./repdata-data-activity.zip")
 }
@@ -56,7 +53,8 @@ if(!file.exists("./activity.csv")) {
 
 * Do not need to read the activity dataset if it has already been read.
 
-```{r echo=TRUE}
+
+```r
 if(!exists("ActivityData")) {
     ActivityData <- read.csv("activity.csv")
 }
@@ -64,14 +62,34 @@ if(!exists("ActivityData")) {
 
 * Displays a summary of the activity dataset
 
-```{r echo=TRUE}
+
+```r
 summary(ActivityData)
+```
+
+```
+##      steps                date          interval     
+##  Min.   :  0.00   2012-10-01:  288   Min.   :   0.0  
+##  1st Qu.:  0.00   2012-10-02:  288   1st Qu.: 588.8  
+##  Median :  0.00   2012-10-03:  288   Median :1177.5  
+##  Mean   : 37.38   2012-10-04:  288   Mean   :1177.5  
+##  3rd Qu.: 12.00   2012-10-05:  288   3rd Qu.:1766.2  
+##  Max.   :806.00   2012-10-06:  288   Max.   :2355.0  
+##  NA's   :2304     (Other)   :15840
 ```
 
 * Display the structure of the activity dataset
 
-```{r echo=TRUE}
+
+```r
 str(ActivityData)
+```
+
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
 ```
 
 #### What is mean total number of steps taken per day?
@@ -84,20 +102,37 @@ dataset.
 
 * A dataset containing the total number of steps taken each day is created.
   
-```{r echo=TRUE}
+
+```r
 TotalStepPerDay <- aggregate(ActivityData$steps, list(ActivityData$date), sum)
 ```
 
 * Display the first 10 rows of the total steps per day dataset.
   
-```{r echo=TRUE}
+
+```r
 colnames(TotalStepPerDay) <- c("Day", "Steps")
 head(TotalStepPerDay, n=10)
 ```
 
+```
+##           Day Steps
+## 1  2012-10-01    NA
+## 2  2012-10-02   126
+## 3  2012-10-03 11352
+## 4  2012-10-04 12116
+## 5  2012-10-05 13294
+## 6  2012-10-06 15420
+## 7  2012-10-07 11015
+## 8  2012-10-08    NA
+## 9  2012-10-09 12811
+## 10 2012-10-10  9900
+```
+
 * A histogram of the total number of steps taken per day is created.
 
-```{r fig.width=10, echo=TRUE}
+
+```r
 with(TotalStepPerDay, 
      {par(mar=c(6, 6, 3, 0), mgp=c(5, 0.5, 0), las=2)
         barplot( 
@@ -112,20 +147,32 @@ with(TotalStepPerDay,
      )
 ```
 
+![](./figure/unnamed-chunk-7-1.png) 
+
 * Calculate the mean and median values (ignoring NA values) using the above dataset.
 
 * Mean
 
-```{r echo=TRUE}
+
+```r
 TotalStepMean <- mean(TotalStepPerDay$Steps, na.rm=TRUE)
 TotalStepMean
 ```
 
+```
+## [1] 10766.19
+```
+
 * Median
       
-```{r echo=TRUE}
+
+```r
 TotalStepMedian <- median(TotalStepPerDay$Steps, na.rm=TRUE)
 TotalStepMedian
+```
+
+```
+## [1] 10765
 ```
 
 #### What is the average daily activity pattern?
@@ -135,20 +182,37 @@ TotalStepMedian
 
 * Compute the mean (average) number of steps taken (ignoring NA values) for each 5-minute interval which is averaged across all days.
   
-```{r echo=TRUE}
+
+```r
 IntervalStep <- aggregate(data=ActivityData, steps~interval, mean)
 colnames(IntervalStep) <- c("Interval", "AvgIntervalSteps")
 ```
 
 * Display the first 10 rows of the average 5-minute interval steps averaged across all day dataset.
 
-```{r echo=TRUE}
+
+```r
 head(IntervalStep, n=10)
+```
+
+```
+##    Interval AvgIntervalSteps
+## 1         0        1.7169811
+## 2         5        0.3396226
+## 3        10        0.1320755
+## 4        15        0.1509434
+## 5        20        0.0754717
+## 6        25        2.0943396
+## 7        30        0.5283019
+## 8        35        0.8679245
+## 9        40        0.0000000
+## 10       45        1.4716981
 ```
   
 * Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis)
 
-```{r fig.width=10, echo=TRUE}
+
+```r
 with(IntervalStep, {plot(x=Interval, y=AvgIntervalSteps, type="l", 
                          main="Time-Series of Average Interval Steps", 
                          xlab="5-minute Interval", 
@@ -156,13 +220,21 @@ with(IntervalStep, {plot(x=Interval, y=AvgIntervalSteps, type="l",
                     }
      )
 ```
+
+![](./figure/unnamed-chunk-12-1.png) 
   
 * Generate the 5-minute interval with the maximum number of steps
 
-```{r echo=TRUE}
+
+```r
 MaxIntervalStep <- IntervalStep[IntervalStep$AvgIntervalSteps ==
                                     max(IntervalStep$AvgIntervalSteps), ]
 MaxIntervalStep
+```
+
+```
+##     Interval AvgIntervalSteps
+## 104      835         206.1698
 ```
 
 #### Imputing missing values
@@ -176,14 +248,20 @@ of steps?
 
 * Total number of rows with NA values in the activity dataset.
 
-```{r echo=TRUE}
+
+```r
 TotalNA <- nrow(subset(ActivityData, is.na(ActivityData$steps)))
 TotalNA
 ```
 
+```
+## [1] 2304
+```
+
 * The average 5-minute interval values will be used to replace the NA values of the activity dataset.
  
-```{r echo=TRUE}
+
+```r
 StepData <- data.frame(ActivityData$steps)
 AvgIntervalStepData <- subset(IntervalStep, select = AvgIntervalSteps)
 StepData[is.na(StepData), ] <- ceiling(AvgIntervalStepData)
@@ -191,20 +269,37 @@ StepData[is.na(StepData), ] <- ceiling(AvgIntervalStepData)
 
 * Create a new dataset that is equal to the activity dataset but with the missing data filled in.
 
-```{r echo=TRUE}
+
+```r
 NewActivityData <- cbind(StepData, ActivityData[ ,2:3])
 colnames(NewActivityData) <- c("Steps", "Date", "Interval")
 ```
 
 * Display the first 10 rows of the new activity dataset with missing values replaced by the average of the 5-minute interval averaged across all days.
 
-```{r echo=TRUE}
+
+```r
 head(NewActivityData, n=10)
+```
+
+```
+##    Steps       Date Interval
+## 1      2 2012-10-01        0
+## 2      1 2012-10-01        5
+## 3      1 2012-10-01       10
+## 4      1 2012-10-01       15
+## 5      1 2012-10-01       20
+## 6      3 2012-10-01       25
+## 7      1 2012-10-01       30
+## 8      1 2012-10-01       35
+## 9      0 2012-10-01       40
+## 10     2 2012-10-01       45
 ```
 
 * The total number of steps taken each day is generated using this new dataset.
 
-```{r echo=TRUE}
+
+```r
 NewTotalStepPerDay <- aggregate(NewActivityData$Steps, 
                                 list(NewActivityData$Date), 
                                 sum)
@@ -213,13 +308,29 @@ colnames(NewTotalStepPerDay) <- c("Day", "Steps")
 
 * Display the first 10 rows of the new total number of steps taken each day.
   
-```{r echo=TRUE}
+
+```r
 head(NewTotalStepPerDay, n=10)
+```
+
+```
+##           Day Steps
+## 1  2012-10-01 10909
+## 2  2012-10-02   126
+## 3  2012-10-03 11352
+## 4  2012-10-04 12116
+## 5  2012-10-05 13294
+## 6  2012-10-06 15420
+## 7  2012-10-07 11015
+## 8  2012-10-08 10909
+## 9  2012-10-09 12811
+## 10 2012-10-10  9900
 ```
 
 * A histogram of the new total number of steps data is created.
 
-```{r fig.width=10, echo=TRUE}
+
+```r
 with(NewTotalStepPerDay, {
       par(mar=c(6, 6, 3, 0), mgp=c(5, 0.5, 0), las=2)
       barplot(
@@ -233,18 +344,30 @@ with(NewTotalStepPerDay, {
   })
 ```
 
+![](./figure/unnamed-chunk-20-1.png) 
+
 * Calculate the mean value of this new dataset with missing values replaced by the average of the 5-minute interval averaged across all days.
   
-```{r echo=TRUE}
+
+```r
 NewActivityStepMean <- mean(NewTotalStepPerDay$Steps)
 NewActivityStepMean
 ```
 
+```
+## [1] 10784.92
+```
+
 * Calculate the median value of this new dataset with missing values replaced by the average of the 5-minute interval averaged across all days.
  
-```{r echo=TRUE}
+
+```r
 NewActivityStepMedian <- median(NewTotalStepPerDay$Steps)
 NewActivityStepMedian
+```
+
+```
+## [1] 10909
 ```
 
 * It seems that adding the missing values to the activity data has caused both the mean and median values to increase.
@@ -257,7 +380,8 @@ For this part the weekdays() function may be of some help here. Use the dataset 
 
 * A new column indicating whether the date is a weekday or a weekend is added to the new activity dataset.
 
-```{r echo=TRUE}
+
+```r
 DayClassification <- data.frame(sapply(NewActivityData$Date, function(day) 
     {if (weekdays(as.Date(day)) %in% 
              c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")) 
@@ -270,32 +394,62 @@ colnames(NewDayTypeActivity) <- c("Steps", "Date", "Interval", "DayType")
   
 * Display the first 10 rows of the new activity data with weekday or weekend classification.
  
-```{r echo=TRUE}
+
+```r
 head(NewDayTypeActivity, n=10)
+```
+
+```
+##    Steps       Date Interval DayType
+## 1      2 2012-10-01        0 weekday
+## 2      1 2012-10-01        5 weekday
+## 3      1 2012-10-01       10 weekday
+## 4      1 2012-10-01       15 weekday
+## 5      1 2012-10-01       20 weekday
+## 6      3 2012-10-01       25 weekday
+## 7      1 2012-10-01       30 weekday
+## 8      1 2012-10-01       35 weekday
+## 9      0 2012-10-01       40 weekday
+## 10     2 2012-10-01       45 weekday
 ```
 
 * The data is then separated into weekday or weekend and the mean (average) number of steps taken for each 5-minute interval, itself averaged across all weekdays or weekends is calculated.
 
-```{r echo=TRUE}
+
+```r
 DayTypeIntervalSteps <- aggregate(data=NewDayTypeActivity, 
                                   Steps ~ DayType + Interval,
                                   mean)
-```  
+```
 
 * Display the first 10 rows of the mean (average) number of steps taken for each 5-minute interval, itself averaged across all weekdays or weekends.
   
-```{r echo=FALSE}
-head(DayTypeIntervalSteps, n=10)
+
+```
+##    DayType Interval     Steps
+## 1  weekday        0 2.2888889
+## 2  weekend        0 0.2500000
+## 3  weekday        5 0.5333333
+## 4  weekend        5 0.1250000
+## 5  weekday       10 0.2888889
+## 6  weekend       10 0.1250000
+## 7  weekday       15 0.3111111
+## 8  weekend       15 0.1250000
+## 9  weekday       20 0.2222222
+## 10 weekend       20 0.1250000
 ```
 
 * A panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis) is generated
 
-```{r fig.width=10, fig.height=7, echo=TRUE}
+
+```r
 library("lattice")
  
 xyplot(type="l", data=DayTypeIntervalSteps, Steps ~ Interval | DayType, 
        xlab="Interval", ylab="Number of Steps", layout=c(1,2)
       )
 ```
+
+![](./figure/unnamed-chunk-27-1.png) 
 
 * The plot shows that the person moves around more (or more active) during the weekend.
