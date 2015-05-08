@@ -4,7 +4,7 @@ output:
     keep_md: true
 ---
 
-```{r global_options}
+```{r global_options, echo=FALSE}
 knitr::opts_chunk$set(fig.path='./figure/')
 ```
 
@@ -284,7 +284,7 @@ DayTypeIntervalSteps <- aggregate(data=NewDayTypeActivity,
 
 * Display the first 10 rows of the mean (average) number of steps taken for each 5-minute interval, itself averaged across all weekdays or weekends.
   
-```{r echo=FALSE}
+```{r echo=TRUE}
 head(DayTypeIntervalSteps, n=10)
 ```
 

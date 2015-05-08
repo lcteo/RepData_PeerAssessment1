@@ -1,8 +1,5 @@
 
 
-```r
-knitr::opts_chunk$set(fig.path='./figure/')
-```
 
 ### Reproducible Research: Peer Assessment 1
 
@@ -424,6 +421,10 @@ DayTypeIntervalSteps <- aggregate(data=NewDayTypeActivity,
 
 * Display the first 10 rows of the mean (average) number of steps taken for each 5-minute interval, itself averaged across all weekdays or weekends.
   
+
+```r
+head(DayTypeIntervalSteps, n=10)
+```
 
 ```
 ##    DayType Interval     Steps
